@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบจดหมายข่าวศาลแขวงอุบลราชธานี</title>
+    <!-- ป้องกัน Error 404 Favicon -->
+    <link rel="icon" href="data:,">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -11,8 +14,9 @@
         }
     </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <!-- เพิ่ม SweetAlert2 -->
+    <!-- นำเข้า SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Sarabun', sans-serif; }
@@ -211,7 +215,7 @@
     </div>
 
     <script>
-        // *** วาง URL ของ Web App จาก Apps Script ของคุณที่นี่ ***
+        // 🛑 นำ Web App URL ของคุณมาวางระหว่างเครื่องหมายคำพูด (Single Quotes) ด้านล่างนี้
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby49ljkWG539bi-iZwdWzLtRGdfflNom_S7AUjxn5H8tN3FFDzEnBPPIYyhDu-bQgvbgQ/exec'; 
 
         // Variables
@@ -221,9 +225,9 @@
         
         let isStaffLoggedIn = false;
         let currentUser = "";
-        let currentPassHash = ""; // เก็บเป็น Hash ไว้ส่ง API
+        let currentPassHash = ""; 
 
-        // ฟังก์ชันเข้ารหัส SHA-1 (ใช้ Web Crypto API)
+        // เข้ารหัส SHA-1
         async function hashSHA1(message) {
             const msgBuffer = new TextEncoder().encode(message);
             const hashBuffer = await crypto.subtle.digest('SHA-1', msgBuffer);
@@ -237,24 +241,20 @@
         });
 
         function setupEventListeners() {
-            // Login & Logout
             document.getElementById('staffLoginBtn').addEventListener('click', () => {
                 document.getElementById('staffLoginModal').classList.remove('opacity-0', 'pointer-events-none');
             });
             document.getElementById('staffLoginForm').addEventListener('submit', handleStaffLogin);
             document.getElementById('staffLogoutBtn').addEventListener('click', handleStaffLogout);
 
-            // Modals Close
             document.querySelectorAll('.modal-close, .modal-overlay').forEach(el => {
                 el.addEventListener('click', closeModals);
             });
 
-            // Newsletter actions
             document.getElementById('addNewsletterBtn').addEventListener('click', openAddModal);
             document.getElementById('newsletterForm').addEventListener('submit', handleFormSubmit);
             document.getElementById('fileUpload').addEventListener('change', handleFileSelect);
 
-            // Filters
             document.getElementById('searchInput').addEventListener('input', filterNewsletters);
             document.getElementById('searchBtn').addEventListener('click', filterNewsletters);
             document.getElementById('rowsPerPage').addEventListener('change', (e) => {
@@ -267,7 +267,6 @@
             const usernameInput = document.getElementById('staffUsername').value;
             const passwordInput = document.getElementById('staffPassword').value;
             
-            // แสดง Loading ด้วย SweetAlert2
             Swal.fire({
                 title: 'กำลังเข้าสู่ระบบ',
                 text: 'โปรดรอสักครู่...',
@@ -276,12 +275,11 @@
             });
 
             try {
-                // เข้ารหัส Password เป็น SHA-1
                 const hashedPassword = await hashSHA1(passwordInput);
 
                 const fd = new FormData();
                 fd.append('username', usernameInput);
-                fd.append('password', hashedPassword); // ส่ง Hash ไปให้ Backend ตรวจ
+                fd.append('password', hashedPassword); 
 
                 const res = await fetch(`${WEB_APP_URL}?action=login`, { method: 'POST', body: fd });
                 const data = await res.json();
@@ -289,20 +287,19 @@
                 if (data.status === 'success') {
                     isStaffLoggedIn = true;
                     currentUser = usernameInput;
-                    currentPassHash = hashedPassword; // เก็บ Hash ไว้ส่งครั้งต่อไป
+                    currentPassHash = hashedPassword; 
                     
                     document.getElementById('staffLoginBtn').classList.add('hidden');
                     document.getElementById('staffControls').classList.remove('hidden');
                     closeModals();
                     renderNewslettersTable();
                     
-                    // แจ้งเตือนสำเร็จ
                     Swal.fire({ icon: 'success', title: 'สำเร็จ', text: data.message, timer: 1500, showConfirmButton: false });
                 } else {
                     Swal.fire({ icon: 'error', title: 'ข้อผิดพลาด', text: data.message });
                 }
             } catch (err) {
-                Swal.fire({ icon: 'error', title: 'การเชื่อมต่อล้มเหลว', text: 'ไม่สามารถติดต่อเซิร์ฟเวอร์ได้ กรุณาลองใหม่' });
+                Swal.fire({ icon: 'error', title: 'การเชื่อมต่อล้มเหลว', text: 'ไม่สามารถติดต่อเซิร์ฟเวอร์ได้ ตรวจสอบ URL อีกครั้ง' });
             }
         }
 
@@ -328,7 +325,6 @@
             });
         }
 
-        // --- Data Fetching ---
         async function fetchAndRenderNewsletters() {
             try {
                 const response = await fetch(`${WEB_APP_URL}?action=getNewsletters`);
@@ -336,7 +332,7 @@
                 populateYearTabs(); filterNewsletters(); renderThumbnails();
             } catch (error) { 
                 console.error(error); 
-                Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด', text: 'โหลดข้อมูลล้มเหลว กรุณารีเฟรชหน้าเว็บ' });
+                Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด', text: 'โหลดข้อมูลล้มเหลว หรือ Web App URL ไม่ถูกต้อง' });
             }
         }
 
@@ -420,7 +416,6 @@
             });
         }
 
-        // --- Modals & Submits ---
         function openAddModal() {
             currentEditId = null; selectedFile = null;
             document.getElementById('newsletterForm').reset();
@@ -469,7 +464,7 @@
             fd.append('newsletterName', name);
             fd.append('newsletterTitle', document.getElementById('newsletterSubject').value);
             fd.append('username', currentUser);
-            fd.append('password', currentPassHash); // ส่งรหัสผ่าน (Hash) ทุกครั้ง
+            fd.append('password', currentPassHash); 
             
             if(currentEditId) fd.append('newsletterId', currentEditId);
 
@@ -507,7 +502,6 @@
             }
         }
 
-        // เปลี่ยนจากการเปิด Modal HTML เป็นเรียกใช้ SweetAlert
         function confirmDelete(id) {
             Swal.fire({
                 title: 'ยืนยันการลบ?',
