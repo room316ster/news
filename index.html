@@ -11,6 +11,8 @@
         }
     </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- เพิ่ม SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Sarabun', sans-serif; }
@@ -35,11 +37,11 @@
             </div>
             <div class="flex items-center space-x-2">
                 <button id="staffLoginBtn" class="bg-white text-primary hover:bg-light px-4 py-2 rounded-md font-medium flex items-center">
-                    <i class="fas fa-user-lock mr-2"></i> เข้าสู่ระบบเจ้าหน้าที่
+                    <i class="fas fa-user-lock mr-2"></i> เข้าสู่ระบบ
                 </button>
                 <div id="staffControls" class="hidden flex space-x-2">
                     <button id="addNewsletterBtn" class="bg-white text-primary hover:bg-light px-4 py-2 rounded-md font-medium flex items-center">
-                        <i class="fas fa-plus mr-2"></i> เพิ่มจดหมายข่าว
+                        <i class="fas fa-plus mr-2"></i> เพิ่มข้อมูล
                     </button>
                     <button id="staffLogoutBtn" class="bg-red-500 text-white hover:bg-red-600 px-4 py-2 rounded-md font-medium flex items-center">
                         <i class="fas fa-sign-out-alt mr-2"></i> ออกจากระบบ
@@ -62,13 +64,11 @@
                     </div>
                     <div class="w-full md:w-48">
                         <label class="block text-sm font-medium text-gray-700 mb-1">วันที่เริ่มต้น</label>
-                        <input type="date" id="startDate" 
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                        <input type="date" id="startDate" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
                     </div>
                     <div class="w-full md:w-48">
                         <label class="block text-sm font-medium text-gray-700 mb-1">วันที่สิ้นสุด</label>
-                        <input type="date" id="endDate" 
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                        <input type="date" id="endDate" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
                     </div>
                 </div>
                 <div class="flex items-end">
@@ -107,9 +107,7 @@
                 <div class="flex items-center mb-4 sm:mb-0">
                     <span class="text-sm text-gray-700 mr-2">แสดง</span>
                     <select id="rowsPerPage" class="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary">
-                        <option value="10">10</option>
-                        <option value="20">20</option>
-                        <option value="50">50</option>
+                        <option value="10">10</option><option value="20">20</option><option value="50">50</option>
                     </select>
                     <span class="text-sm text-gray-700 ml-2">รายการ</span>
                 </div>
@@ -135,11 +133,11 @@
                 </div>
                 <form id="staffLoginForm" class="space-y-4">
                     <div>
-                        <label for="staffUsername" class="block text-sm font-medium text-gray-700 mb-1">ชื่อผู้ใช้</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อผู้ใช้</label>
                         <input type="text" id="staffUsername" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
                     </div>
                     <div>
-                        <label for="staffPassword" class="block text-sm font-medium text-gray-700 mb-1">รหัสผ่าน</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">รหัสผ่าน</label>
                         <input type="password" id="staffPassword" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
                     </div>
                     <div class="flex justify-end pt-2">
@@ -205,41 +203,33 @@
                     </div>
                     <div class="flex justify-end pt-2">
                         <button type="button" class="modal-close bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 rounded-md mr-2">ยกเลิก</button>
-                        <button type="submit" id="submitBtnText" class="bg-primary hover:bg-secondary text-white py-2 px-4 rounded-md">บันทึก</button>
+                        <button type="submit" class="bg-primary hover:bg-secondary text-white py-2 px-4 rounded-md">บันทึก</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Delete Modal -->
-    <div id="deleteModal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50">
-        <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
-        <div class="modal-container bg-white w-11/12 md:max-w-sm mx-auto rounded-lg shadow-lg z-50 overflow-y-auto">
-            <div class="modal-content py-4 text-left px-6">
-                <p class="text-xl font-bold text-red-600 mb-3">ยืนยันการลบ</p>
-                <p class="text-gray-700 mb-6">คุณต้องการลบจดหมายข่าวนี้ใช่หรือไม่?</p>
-                <div class="flex justify-end pt-2">
-                    <button class="modal-close bg-gray-300 hover:bg-gray-400 py-2 px-4 rounded-md mr-2">ยกเลิก</button>
-                    <button id="confirmDeleteBtn" class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-md">ลบ</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
         // *** วาง URL ของ Web App จาก Apps Script ของคุณที่นี่ ***
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz_XXXXXXXX/exec'; 
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby49ljkWG539bi-iZwdWzLtRGdfflNom_S7AUjxn5H8tN3FFDzEnBPPIYyhDu-bQgvbgQ/exec'; 
 
         // Variables
         let allNewsletters = [], filteredNewsletters = [];
         let currentYear = 'all', currentPage = 1, itemsPerPage = 10;
-        let currentEditId = null, deleteId = null, selectedFile = null;
+        let currentEditId = null, selectedFile = null;
         
-        // Auth Variables (เก็บ Session ชั่วคราว)
         let isStaffLoggedIn = false;
         let currentUser = "";
-        let currentPass = "";
+        let currentPassHash = ""; // เก็บเป็น Hash ไว้ส่ง API
+
+        // ฟังก์ชันเข้ารหัส SHA-1 (ใช้ Web Crypto API)
+        async function hashSHA1(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-1', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             fetchAndRenderNewsletters();
@@ -263,7 +253,6 @@
             document.getElementById('addNewsletterBtn').addEventListener('click', openAddModal);
             document.getElementById('newsletterForm').addEventListener('submit', handleFormSubmit);
             document.getElementById('fileUpload').addEventListener('change', handleFileSelect);
-            document.getElementById('confirmDeleteBtn').addEventListener('click', confirmDelete);
 
             // Filters
             document.getElementById('searchInput').addEventListener('input', filterNewsletters);
@@ -277,16 +266,22 @@
             e.preventDefault();
             const usernameInput = document.getElementById('staffUsername').value;
             const passwordInput = document.getElementById('staffPassword').value;
-            const btn = document.getElementById('loginSubmitBtn');
-            const originalText = btn.innerHTML;
-
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังตรวจสอบ...';
-            btn.disabled = true;
+            
+            // แสดง Loading ด้วย SweetAlert2
+            Swal.fire({
+                title: 'กำลังเข้าสู่ระบบ',
+                text: 'โปรดรอสักครู่...',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
 
             try {
+                // เข้ารหัส Password เป็น SHA-1
+                const hashedPassword = await hashSHA1(passwordInput);
+
                 const fd = new FormData();
                 fd.append('username', usernameInput);
-                fd.append('password', passwordInput);
+                fd.append('password', hashedPassword); // ส่ง Hash ไปให้ Backend ตรวจ
 
                 const res = await fetch(`${WEB_APP_URL}?action=login`, { method: 'POST', body: fd });
                 const data = await res.json();
@@ -294,30 +289,43 @@
                 if (data.status === 'success') {
                     isStaffLoggedIn = true;
                     currentUser = usernameInput;
-                    currentPass = passwordInput;
+                    currentPassHash = hashedPassword; // เก็บ Hash ไว้ส่งครั้งต่อไป
                     
                     document.getElementById('staffLoginBtn').classList.add('hidden');
                     document.getElementById('staffControls').classList.remove('hidden');
                     closeModals();
-                    renderNewslettersTable(); // แสดงปุ่มจัดการตาราง
+                    renderNewslettersTable();
+                    
+                    // แจ้งเตือนสำเร็จ
+                    Swal.fire({ icon: 'success', title: 'สำเร็จ', text: data.message, timer: 1500, showConfirmButton: false });
                 } else {
-                    alert(data.message);
+                    Swal.fire({ icon: 'error', title: 'ข้อผิดพลาด', text: data.message });
                 }
             } catch (err) {
-                alert('การเชื่อมต่อล้มเหลว');
-            } finally {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
+                Swal.fire({ icon: 'error', title: 'การเชื่อมต่อล้มเหลว', text: 'ไม่สามารถติดต่อเซิร์ฟเวอร์ได้ กรุณาลองใหม่' });
             }
         }
 
         function handleStaffLogout() {
-            isStaffLoggedIn = false;
-            currentUser = ""; currentPass = "";
-            document.getElementById('staffLoginBtn').classList.remove('hidden');
-            document.getElementById('staffControls').classList.add('hidden');
-            document.getElementById('staffLoginForm').reset();
-            renderNewslettersTable(); // ซ่อนปุ่มจัดการตาราง
+            Swal.fire({
+                title: 'ต้องการออกจากระบบ?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'ออกจากระบบ',
+                cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    isStaffLoggedIn = false;
+                    currentUser = ""; currentPassHash = "";
+                    document.getElementById('staffLoginBtn').classList.remove('hidden');
+                    document.getElementById('staffControls').classList.add('hidden');
+                    document.getElementById('staffLoginForm').reset();
+                    renderNewslettersTable();
+                    Swal.fire({ icon: 'success', title: 'ออกจากระบบแล้ว', timer: 1500, showConfirmButton: false });
+                }
+            });
         }
 
         // --- Data Fetching ---
@@ -326,7 +334,10 @@
                 const response = await fetch(`${WEB_APP_URL}?action=getNewsletters`);
                 allNewsletters = await response.json();
                 populateYearTabs(); filterNewsletters(); renderThumbnails();
-            } catch (error) { console.error(error); }
+            } catch (error) { 
+                console.error(error); 
+                Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด', text: 'โหลดข้อมูลล้มเหลว กรุณารีเฟรชหน้าเว็บ' });
+            }
         }
 
         function populateYearTabs() {
@@ -364,22 +375,22 @@
             tbody.innerHTML = '';
             
             const paginated = filteredNewsletters.slice((currentPage-1)*itemsPerPage, currentPage*itemsPerPage);
-            if(paginated.length === 0) return tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4">ไม่พบข้อมูล</td></tr>';
+            if(paginated.length === 0) return tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-gray-500">ไม่พบข้อมูล</td></tr>';
 
             paginated.forEach((nl, i) => {
                 const dateParts = nl.Date.split('-');
                 const thDate = new Date(dateParts[0], dateParts[1]-1, dateParts[2]).toLocaleDateString('th-TH', {year:'numeric',month:'long',day:'numeric'});
                 
                 tbody.innerHTML += `
-                    <tr class="${i%2===0?'bg-white':'bg-gray-50'}">
+                    <tr class="${i%2===0?'bg-white':'bg-gray-50'} hover:bg-gray-100 transition">
                         <td class="px-6 py-4">${(currentPage-1)*itemsPerPage + i + 1}</td>
                         <td class="px-6 py-4">${nl.Name}</td>
                         <td class="px-6 py-4">${nl.Title}</td>
-                        <td class="px-6 py-4">${thDate}</td>
-                        <td class="px-6 py-4 text-center"><a href="${nl.ImageUrl}" target="_blank" class="bg-primary text-white px-3 py-1 rounded text-xs">ดู</a></td>
+                        <td class="px-6 py-4 whitespace-nowrap">${thDate}</td>
+                        <td class="px-6 py-4 text-center"><a href="${nl.ImageUrl}" target="_blank" class="bg-primary text-white px-3 py-1 rounded text-xs hover:bg-secondary">ดู</a></td>
                         <td class="px-6 py-4 text-center ${isStaffLoggedIn ? '' : 'hidden'}">
-                            <button onclick="openEditModal(${nl.ID})" class="text-blue-600 mr-2"><i class="fas fa-edit"></i></button>
-                            <button onclick="openDeleteModal(${nl.ID})" class="text-red-600"><i class="fas fa-trash"></i></button>
+                            <button onclick="openEditModal(${nl.ID})" class="text-blue-600 mr-2 hover:text-blue-800"><i class="fas fa-edit"></i></button>
+                            <button onclick="confirmDelete(${nl.ID})" class="text-red-600 hover:text-red-800"><i class="fas fa-trash"></i></button>
                         </td>
                     </tr>`;
             });
@@ -391,7 +402,7 @@
             wrap.innerHTML = '';
             const total = Math.ceil(filteredNewsletters.length / itemsPerPage);
             for(let i=1; i<=total; i++) {
-                wrap.innerHTML += `<button onclick="currentPage=${i}; renderNewslettersTable()" class="px-3 py-1 border rounded ${i===currentPage?'bg-primary text-white':''}">${i}</button>`;
+                wrap.innerHTML += `<button onclick="currentPage=${i}; renderNewslettersTable()" class="px-3 py-1 border rounded mx-1 ${i===currentPage?'bg-primary text-white':'hover:bg-gray-200'}">${i}</button>`;
             }
         }
 
@@ -402,9 +413,9 @@
             
             yFil.forEach(nl => {
                 wrap.innerHTML += `
-                    <div class="flex flex-col items-center cursor-pointer" onclick="window.open('${nl.ImageUrl}','_blank')">
-                        <img src="${nl.ImageUrl}" onerror="this.src='https://placehold.co/800x1100?text=No+Image'" class="w-full h-48 object-cover rounded shadow mb-2">
-                        <p class="text-sm font-medium text-center">${nl.Name}</p>
+                    <div class="flex flex-col items-center cursor-pointer transform hover:scale-105 transition duration-200" onclick="window.open('${nl.ImageUrl}','_blank')">
+                        <img src="${nl.ImageUrl}" onerror="this.src='https://placehold.co/800x1100?text=No+Image'" class="w-full h-48 object-cover rounded shadow mb-2 border border-gray-200">
+                        <p class="text-sm font-medium text-center text-gray-800">${nl.Name}</p>
                     </div>`;
             });
         }
@@ -436,11 +447,6 @@
             document.getElementById('newsletterModal').classList.remove('opacity-0', 'pointer-events-none');
         }
 
-        function openDeleteModal(id) {
-            deleteId = id;
-            document.getElementById('deleteModal').classList.remove('opacity-0', 'pointer-events-none');
-        }
-
         function closeModals() {
             document.querySelectorAll('.modal').forEach(m => m.classList.add('opacity-0', 'pointer-events-none'));
         }
@@ -462,14 +468,18 @@
             const fd = new FormData();
             fd.append('newsletterName', name);
             fd.append('newsletterTitle', document.getElementById('newsletterSubject').value);
-            // แนบรหัสผ่านทุกครั้งที่ยิง POST
             fd.append('username', currentUser);
-            fd.append('password', currentPass);
+            fd.append('password', currentPassHash); // ส่งรหัสผ่าน (Hash) ทุกครั้ง
             
             if(currentEditId) fd.append('newsletterId', currentEditId);
 
-            const btn = document.getElementById('submitBtnText');
-            btn.innerHTML = 'กำลังบันทึก...'; btn.disabled = true;
+            closeModals();
+            Swal.fire({
+                title: 'กำลังบันทึกข้อมูล...',
+                text: 'ระบบกำลังอัปโหลดไฟล์ไปที่ Google Drive',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
 
             try {
                 if (selectedFile) {
@@ -485,23 +495,55 @@
 
                 const res = await fetch(`${WEB_APP_URL}?action=${currentEditId ? 'editNewsletter' : 'addNewsletter'}`, { method:'POST', body:fd });
                 const data = await res.json();
-                alert(data.message);
-                if(data.status === 'success') { closeModals(); fetchAndRenderNewsletters(); }
-            } catch(e) { alert('เกิดข้อผิดพลาด'); }
-            finally { btn.innerHTML = 'บันทึก'; btn.disabled = false; }
+                
+                if(data.status === 'success') { 
+                    Swal.fire({ icon: 'success', title: 'สำเร็จ', text: data.message, timer: 1500, showConfirmButton: false });
+                    fetchAndRenderNewsletters(); 
+                } else {
+                    Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด', text: data.message });
+                }
+            } catch(e) { 
+                Swal.fire({ icon: 'error', title: 'การเชื่อมต่อล้มเหลว', text: 'ไม่สามารถติดต่อเซิร์ฟเวอร์ได้' });
+            }
         }
 
-        async function confirmDelete() {
-            const fd = new FormData();
-            fd.append('username', currentUser);
-            fd.append('password', currentPass);
-            
-            try {
-                const res = await fetch(`${WEB_APP_URL}?action=deleteNewsletter&newsletterId=${deleteId}`, { method: 'POST', body: fd });
-                const data = await res.json();
-                alert(data.message);
-                if(data.status === 'success') { closeModals(); fetchAndRenderNewsletters(); }
-            } catch(e) { alert('เกิดข้อผิดพลาด'); }
+        // เปลี่ยนจากการเปิด Modal HTML เป็นเรียกใช้ SweetAlert
+        function confirmDelete(id) {
+            Swal.fire({
+                title: 'ยืนยันการลบ?',
+                text: "การดำเนินการนี้ไม่สามารถย้อนกลับได้!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'ใช่, ลบเลย!',
+                cancelButtonText: 'ยกเลิก'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'กำลังลบข้อมูล...',
+                        allowOutsideClick: false,
+                        didOpen: () => { Swal.showLoading(); }
+                    });
+
+                    const fd = new FormData();
+                    fd.append('username', currentUser);
+                    fd.append('password', currentPassHash);
+                    
+                    try {
+                        const res = await fetch(`${WEB_APP_URL}?action=deleteNewsletter&newsletterId=${id}`, { method: 'POST', body: fd });
+                        const data = await res.json();
+                        if(data.status === 'success') { 
+                            Swal.fire({ icon: 'success', title: 'ลบเรียบร้อย!', text: data.message, timer: 1500, showConfirmButton: false });
+                            fetchAndRenderNewsletters(); 
+                        } else {
+                            Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด', text: data.message });
+                        }
+                    } catch(e) { 
+                        Swal.fire({ icon: 'error', title: 'การเชื่อมต่อล้มเหลว', text: 'ไม่สามารถติดต่อเซิร์ฟเวอร์ได้' });
+                    }
+                }
+            });
         }
     </script>
 </body>
